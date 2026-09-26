@@ -34,7 +34,6 @@ def solve_matching(pred_boxes, gt_boxes, iou_threshold=0.5):
     tp = sum(1 for r, c in zip(row_ind, col_ind) if iou[r, c] >= iou_threshold)
     return tp
 
-# [保留你原有的 parse_qwen_json_output 函数不变]
 def parse_qwen_json_output(text):
     preds = []
     match = re.search(r'\[\s*\{.*\}\s*\]', text, re.DOTALL)
@@ -53,7 +52,7 @@ def parse_qwen_json_output(text):
                 preds.append([float(x) for x in rb])
     return np.array(preds) if preds else np.zeros((0, 4))
 
-# [新增] 专门解析计数的函数
+# 解析计数的函数
 def parse_count_output(text):
     nums = re.findall(r'\d+', text)
     return int(nums[0]) if nums else 0
@@ -108,7 +107,7 @@ def main():
                 ]}], tokenize=False, add_generation_prompt=True)
                 batch_count_prompts.append(cnt_prompt)
                 
-                # 检测 Prompt (完全保持你原来的 Prompt 不变)
+                # 检测 Prompt
                 det_prompt = processor.apply_chat_template([{"role": "user", "content": [
                     {"type": "image", "image": batch_imgs[idx]},
                     {"type": "text", "text": f"Detect the object: {item['positive']}. Return JSON list with 'bbox_2d' [xmin, ymin, xmax, ymax]"}
